@@ -102,6 +102,9 @@ docker network creat testNetwork #创建一个网络组
 docker run ... --network testNetwork #容器运行时加入此网络组
 ping ${容器名} #进入网络组中的一个容器，通过容器名Ping另一个容器
 #yml配置文件、nginx配置文件中也可直接用容器名代替ip地址
+原理：
+创建自定义网络是，Docker会自动为该网络配置一个DNS服务器，所有链接到这个网络得到容器都会自动注册这个DNS服务器
+容器启动时，会向这个DNS服务器注册自己的名称和ip，其他容器在进行域名解析时就可以通过容器名找到ip了
 ```
 
 ### 使用Docker部署后端服务
