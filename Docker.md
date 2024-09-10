@@ -7,6 +7,8 @@
   docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}\t{{.Names}}" #清爽输出
   docker logs -f ${容器名} #查看容器日志
   exit #退出容器
+  docker stats #查看容器CPU、内存等资源使用情况
+  docker inspect <container_id> #资源配置 + 使用情况
   ```
 
 - 配置环境变量
