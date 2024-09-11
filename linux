@@ -1,0 +1,96 @@
+# Linux
+### find命令
+```text
+find / -type d -iname "ssh" #查询目录
+
+find / -name "*nginx" #通配符查询文件
+```
+
+### 用户操作
+```shell
+#切换
+su username 
+#当前用户
+whoami
+#用户列表
+cut -d: -f1 /etc/passwd #用户名
+cat /etc/passwd
+```
+### tar包操作
+  ```shell
+# 打包
+tar -cvf bao.tar 目录
+  
+#解包
+tar -xzf bao.tar
+  
+#提取tar包文件夹
+tar -xzf archive.tar.gz --strip-components=1 --no-anchored test -C ./
+  
+--strip-components=1：这个选项用来去除文件路径中的第一级目录
+--no-anchored：这个选项表示模式匹配可以从任何位置开始。
+  
+#提取tar包文件
+tar --extract --file=$PACKAGE_NAME.tar.gz $service_name.tar.gz
+  
+# 打tar.gz包
+tar -czvf koopage-collaboration.tar.gz koopage-collaboration
+  
+# 解压tar.gz包
+tar -xzvf koopage-collaboration.tar.gz
+```
+### 搜索文本
+```
+grep "searchTxt" target.txt
+```
+
+### 在windows下编辑过的sh脚本在linux中执行报错解决办法
+  ```shell
+# 将'\r'删除
+tr -d '\r' < controller.sh >  newController.sh
+  ```
+### linux添加、修改系统环境变量
+  ```shell
+~/.bashrc # 当前用户在执行脚本前执行
+~/.bash_profile # 当前用户登录时执行
+/etc/bashrc #所有用户在执行脚本前执行
+/etc/profile #所有用户登录时执行
+
+echo 'export JAVA_HOME=...' >> ~/.bashrc
+source ~/.bashrc
+  ```
+
+### 授权文件所有者
+  ```shell
+sudo chown -R service /path/to/directory
+  
+sudo chown -R service:group /path/to/directory
+  ```
+
+### DNS出问题、域名找不到时，添加域名和ip的映射
+
+  ```shell
+修改文件 /etc/hosts
+# ip 域名
+xxx.xxx.xxx.xxx www.xxx.com
+  
+# 清楚DNS缓存 使改动生效 重登也可以
+sudo /etc/init.d/nscd restart
+  ```
+### linu系统中默认DNS服务器地址配置文件
+
+  ```
+/etc/resolv.conf
+  ```
+### 软连接
+
+```shell
+# 在pathB创建一个pathA的副本，能链接到pathA对应文件
+ln -s pathA pathB
+```
+
+
+### 服务器间传输文件
+```
+scp ${文件名} ${用户名}@${目标服务器ip}:${目标路径}
+```
