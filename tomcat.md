@@ -50,4 +50,10 @@ service = n*connector + container*1
 ###### Wrapper
 就是servlet，tomcat中最底层的容器
 
-
+## Tomcat调用流程
+connector 监听端口 socket形式的http请求
+接收到请求后，调用protocolHandler将请求信息转化成request response
+交给coyoteAdapter,将request response转化成servletRequest servletResponse
+coyoteAdapter调用engine，层层调用找到servlet服务类
+服务类将结果写入response。返回connector
+connector返回客户端
