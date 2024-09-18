@@ -57,3 +57,7 @@ connector 监听端口 socket形式的http请求
 coyoteAdapter调用engine，层层调用找到servlet服务类
 服务类将结果写入response。返回connector
 connector返回客户端
+
+## 前后端分离部署
+前端静态资源放在NGINX上
+后端服务部署在TOMCAT上
