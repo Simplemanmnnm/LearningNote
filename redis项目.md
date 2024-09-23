@@ -1,3 +1,4 @@
+# Redis
 ## Session
 > 用户首次访问服务器时，服务器会为该用户创建一个新的Session，并生成一个唯一的sessionId
 > 重启服务后数据清空
@@ -37,6 +38,8 @@ registry.addInterceptor(new TestInterceptor());
 ## BeanUtil
 ```
 BeanUtil.copyproperties(数据源对象, 目标类对象)
+BeanUtil.beanToMap
+BeanUtil.fillBeanWithMap
 ```
 ## redis保存对象结构
 两种方式：String形式的json;Hash结构
@@ -52,3 +55,59 @@ tool:1   name     lsq
 #### token
 token的必要性：
 1.随机生成然后可以做到一定时间段内有效，就算泄露也影响有限
+
+## 使用redis 需要引入的依赖
+```
+<!-- 读取相关配置、链接、初始化bean，可直接注入RedisTemplate和StringRedisTemplate -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+## Spring自动注入细节
+```
+只有spring管理的bean并且 由spring创建出来的 内可以使用resource注入
+                        不能是自己new出来的
+spring创建这个bean的时候才会读取resource并注入对应的bean
+```
+
+## redis和数据库数据一致性
+```
+优选方案：数据库更新时，主动让redis删除缓存(如果主动去更新redis可能不会被用到，做了无用功)
+先操作数据库再操作缓存 + 数据有效期
+```
+
+## 缓存穿透
+```
+通过redis和数据库中都不存在的数据查询，请求直接打到数据库
+这样的请求多了就可能压垮数据库（被攻击）
+
+解决方案：
+1. 限流 + 缓存空对象 + 命中空值时报错结束
+2. 客户端与redis之间维护一个布隆过滤器， 存储数据库中数据的hash值
+```
+
+## 缓存雪崩
+```
+大量key失效或者redis宕机，大量请求发到数据库
+解决：
+1.TTL随机值 防大量key失效
+2.redis集群 防宕机
+3.服务降级限流 防止redis集群都宕机，舍弃部分服务保护数据库
+4.多级缓存 亿级数据处理
+```
+## 缓存击穿
+```
+热Key问题，高并发访问且缓存重建业务复杂(涉及多表或者三方组件等)的key失效
+导致：多线程都直接查数据库并耗时重建此key，数据库被压垮
+解决：
+1.重建Key做互斥操作 缺点：大量线程等待   一致性优先
+2.逻辑过期，redis不设置TTL，自行维护过期时间  可用性优先
+    发现过期 拿锁 新开线程重建key，新线程重建完毕自行释放锁，旧线程返回过期数据
+RedisData {
+   LocalDateTime expireTime;
+   Object data;
+}
+```
+
