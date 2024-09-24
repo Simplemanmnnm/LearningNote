@@ -120,3 +120,78 @@ RedisData {
 26 epo
 ### 根据用户id加锁
 synchronized(userId.toString().intern()) // intern 去常量池找到此字符串 返回地址
+集群模式下无法做到线程安全 -> redis分布式锁
+
+### @Transactional方法直接调用无法触发事务
+必须由spring管理注入的对象来调用
+```
+AopContext.currentProxy() // 当前对象的代理对象，取代this(由spring管理注入的对象)
+```
+### 布尔类型避免自动拆箱
+```
+Boolean flag;
+return Boolean.TRUE.equals(flag);
+```
+### 自定义redis锁操作类
+```
+上锁tryLock：利用setnx，成功返回true
+放弃锁unlock：删除Key
+```
+### 业务流程过久导致锁超时释放
+会出现线程安全问题
+```
+A 获取锁
+A 业务阻塞，锁超时消失
+B 获取锁
+A 业务完成，删除锁
+C 获取锁
+此时B C同时拿到了锁并进行业务处理
+解决：获取锁存入一个UUID，删除锁时对比UUID，若不一致，则不删除
+疑问：那A在锁超时后仍然在执行业务逻辑，岂不是也出现了线程安全问题
+```
+### 判断锁一致后准备删除锁，此时阻塞，导致线程安全问题
+如果碰巧发生了full GC - -
+```
+解决：保证判断锁一致 + 释放锁 操作的原子性 -> LUA脚本
+```
+### LUA脚本
+通过redisTemplate类中的execute命令调用执行
+#### Redis调用函数
+```
+redis.call('命令名称', '参数', ....)
+redis.call('set', 'key', 'value')
+local name = redis.call('get', 'key')
+...
+```
+#### redis调用脚本 - EVAL
+```
+      脚本内容                               key类型参数格式
+EVAL "return redis.call('set', KEYS[1], ARGV[1])" 1 name Rose
+KEYS ARGV获取参数
+```
+### 仍然存在的问题
+1. 不可重入 A 获取锁 调用方法A.method 再次获取锁
+2. 不可重试 只尝试获取一次锁，不能多试几次
+3. 超时释放 导致线程安全问题
+4. redis主从一致性
+**都可以通过Redisson框架解决**
+## Redisson
+> redis基础上实现的分布式工具集合
+> 默认锁超时释放时间30s
+### maven依赖
+```
+<groupId>org.redisson</groupId>
+<artifactId>redisson</artifactId>
+```
+### 可重入锁原理
+```
+底层是通过LUA脚本实现
+使用hash结构，多一个字段，保存重入次数
+获取锁时若field相同则重入次数加一
+释放锁时 重入计数减一，若为0 则删除
+```
+### 锁重试机制
+```
+redisson tryLock获取锁成功返回null，获取失败返回锁的ttl
+在最大重试等待时间内，订阅锁的释放发布通知(publish),通过future的await方法实现
+```
