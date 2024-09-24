@@ -118,3 +118,5 @@ RedisData {
 
 ### 全局唯一ID
 26 epo
+### 根据用户id加锁
+synchronized(userId.toString().intern()) // intern 去常量池找到此字符串 返回地址
