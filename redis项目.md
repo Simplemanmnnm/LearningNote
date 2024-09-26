@@ -258,3 +258,22 @@ XGROUP CREATE
 从消费者组读取消息：
 XREADGROUP
 ```
+## 常见命令
+```
+keys：会阻塞所有其他命令，查询key 慎用
+del：删除key
+exists:判断key是否存在
+expire:设置有效期
+ttl:查询key剩余有效期
+```
+## 常见数据结构
+String、Hash、List(双向链表)、Set(value为null的hashmap、交集差集)、SortedSet、GEO、BitMap、HyperLog
+### String
+```
+底层都是字节数组
+1.普通字符串 底层编码 将字符转译成字节码
+2.整数，可自增自减 底层编码为二进制形式
+3.浮点，可自增自减 底层编码为二进制形式
+
+key命名：项目名:业务名:类型:值
+```
