@@ -31,7 +31,9 @@ afterCompletion -> 整个请求完成之后,视图渲染之后
 配置类 实现接口org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration注解修饰
 重写方法public void addInterceptors(InterceptorRegistry registry)
-registry.addInterceptor(new TestInterceptor());
+registry.addInterceptor(new TestInterceptor())
+        .addPathPatterns("/api/**") // 指定要拦截的路径模式
+        .excludePathPatterns("/api/public/**"); // 指定不拦截的路径模式;
 可以添加或者排除需要拦截的接口
 ```
 
