@@ -68,6 +68,12 @@ console.log(inputRef.current) // 输出input这个
 
 ### useContext
 
+定义一个全局变量，整个应用中都可以直接用
+
+```react
+const msg = useContext(MsgContext)
+```
+
 ![image-20250622190917156](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20250622190917156.png)
 
 ### useEffect
