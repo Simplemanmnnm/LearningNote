@@ -185,3 +185,41 @@ npm run start
 ## Ant Design
 
 ![image-20250623214803537](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20250623214803537.png)
+
+
+Ok, we’ve build several pages for incentive on admin portal, 
+the first page is Achieved bonuses page, 
+this page will display all the bonuses 
+with Achieved status or the status after Achieved, 
+we will display basic information of bonuses
+
+The second page is to search a specific bonus by partner id and bonus code, 
+let me get a partner id from former page, 
+As you can see, 
+now we get a status information of a specific bonus
+
+now you may have a question, what’s the point of this page? 
+
+Well, the former page only display  bonuses with these 3 kinds of status, 
+which is meaning for display, 
+But if bu want to check whether a specific partner is eligible to earn this bonus, they can use this page to check.
+
+The third page is the make good report page,
+The make good report will be automatically generated every month, which will contain all bonuses that are achieved last month
+We will display basic information of make good reports here
+Including how bonuses are in this report and the total value
+
+You can click button here, to download a excel file of this report, 
+For bu to upload to impact
+As this is production environment, I will show you the download function in pro production environment
+If somebody have downloaded the report excel file, the status of this report will be switched to DOWNLOADED, 
+And here a button appears, this button is for BU to make sure, they have already uploaded excel file to the impact
+If BU have uploaded excel file to the impact, they should click this button to mark this report as SENT FOR PAYMENT,
+And if BU is sure all the bonuses in a reports have been paid, they should click this button, to switch the status to PAID
+
+And you can see detail about this report by click this button,
+This is make good report detail page,
+As you can see, we will display basic information here, and all the bonuses in this report, and the change history, which record the status change
+Who at sometime do something
+So these several pages for incentive, any questions?
+
